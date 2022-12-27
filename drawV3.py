@@ -35,13 +35,14 @@ def drawInPygame(screen,list_point,font):
         right_eye = points[42:48]
         landmarks.append(points)
         particles.add_particles()
+        last_position = {}
         
-        if len(rotation)!= 0:
+        try: #Try Find Changes if face is detect
             screen.fill((0 ,177 , 64))
             eye_dis = math.sqrt((right_eye[2][1] - left_eye[1][1]) ** 2 + (right_eye[2][0] - left_eye[1][0]) ** 2)
             rot_z = rotation[2]
-            text = font.render('rotz: ' + str(round(math.degrees(rot_z), 2)), screen, (255, 250,255))
-            screen.blit(text, (10 , 10 ))
+            text_z = font.render('rotz: ' + str(round(math.degrees(rot_z), 2)), screen, (255, 250,255))
+            screen.blit(text_z, (10 , 10 ))
             if round(math.degrees(rot_z), 2) > 12:
                 poly_3d.PLUS = 40
             elif round(math.degrees(rot_z), 2) < -12:
@@ -53,14 +54,14 @@ def drawInPygame(screen,list_point,font):
             right_eyebrow_length = math.sqrt((right_eyebrow[-1][0] - right_eyebrow[0][0]) ** 2 + (right_eyebrow[-1][1] - right_eyebrow[0][1]) ** 2) / eye_dis
             eyebrow_implications = left_eyebrow_length - right_eyebrow_length
             rot_y = rotation[1]
-            text = font.render('roty: ' + str(round(math.degrees(rot_y), 2)), screen, (255, 250,255))
-            screen.blit(text, (10 , 30 ))
+            text_y = font.render('roty: ' + str(round(math.degrees(rot_y), 2)), screen, (255, 250,255))
+            screen.blit(text_y, (10 , 30 ))
 
             nose_length = nose[6][1] - nose[3][1]
             position = [nose[6][0] / 100 - 0.5, nose[6][1] - 0.5, eye_dis / AVERAGE_DISTANCE]
             rot_x = rotation[0]
-            text = font.render('rotx: ' + str(round(math.degrees(rot_x), 2)), screen, (255,250, 255))
-            screen.blit(text, (10 , 50 ))
+            text_x = font.render('rotx: ' + str(round(math.degrees(rot_x), 2)), screen, (255,250, 255))
+            screen.blit(text_x, (10 , 50 ))
             for i, rot in enumerate([-rot_x, -rot_y, rot_z]):
                 rot_histories[i].append(rot)
                 rot_histories[i] = rot_histories[i][-20:]
@@ -85,6 +86,14 @@ def drawInPygame(screen,list_point,font):
             particles.show(screen)
             poly_3d.update(screen,poly_3d.x_angle,poly_3d.y_angle,poly_3d.z_angle)
             pygame.display.update()
+        except:#except face isn't detected
+            particles.show(screen)
+            screen.blit(text_z, (10 , 10 ))
+            screen.blit(text_y, (10 , 30 ))
+            screen.blit(text_x, (10 , 50 ))
+            poly_3d.update(screen,poly_3d.x_angle,poly_3d.y_angle,poly_3d.z_angle)
+            pygame.display.update()
+
             
 
 def runPygame(screen,clock,font):

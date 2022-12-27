@@ -29,6 +29,7 @@ face_points = [127,93,132,58,172,136,150,176,152,400,365,379,397,288,361,323,356
 def main(debug=True):
 
     list_points = []
+    list_points_last = []
     cap = cv2.VideoCapture(0)
 
     # Facemesh
@@ -83,8 +84,10 @@ def main(debug=True):
         # flip the input image so that it matches the facemesh stuff
         img = cv2.flip(img, 1)
         rot = []
-        kern_25 = np.ones((35,35),np.float32)/625.0
-        kern_output = cv2.filter2D(img,-1,kern_25)
+        rot_last = []
+        # kern_25 = np.ones((35,35),np.float32)/625.0
+        # kern_output = cv2.filter2D(img,-1,kern_25)
+
         # if there is any face detected
         if faces:
             list_points = []
@@ -143,9 +146,9 @@ def main(debug=True):
             # roll: +ve when the axis pointing upward
             # pitch: +ve when we look upward
             # yaw: +ve when we look left
-            roll = np.clip(np.degrees(steady_pose[0][1]), -90, 90)
-            pitch = np.clip(-(180 + np.degrees(steady_pose[0][0])), -90, 90)
-            yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90)
+            roll = np.clip(np.degrees(steady_pose[0][1]), -90, 90) # Rot z
+            pitch = np.clip(-(180 + np.degrees(steady_pose[0][0])), -90, 90)# Rot x
+            yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90) # Rot y
 
             # print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
             # print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
@@ -170,8 +173,8 @@ def main(debug=True):
 
             # pose_estimator.draw_axis(img, pose[0], pose[1])
 
-            pose_estimator.draw_axes(kern_output, steady_pose[0], steady_pose[1])
-            pose_estimator.draw_mouth(kern_output,list_points)
+            pose_estimator.draw_axes(img, steady_pose[0], steady_pose[1])
+            pose_estimator.draw_mouth(img,list_points)
 
             
 
@@ -180,14 +183,14 @@ def main(debug=True):
             pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
         if debug:
-            
-            cv2.imshow('Facial landmark', kern_output)
+            cv2.imshow('Facial landmark', img)
             # cv2.imshow('Facial landmark', img_facemesh)
 
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
+
         yield {'points':list_points,'rotation':rot}
 
 
