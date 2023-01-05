@@ -3,7 +3,6 @@ For finding the face and face landmarks for further manipulication
 """
 
 import cv2
-import csv
 import copy
 import itertools
 import mediapipe as mp

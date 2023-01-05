@@ -32,7 +32,7 @@ left_horn = ap.left_horn
 top_head = ap.top_head
 left_head = ap.left_head
 right_head = ap.right_head
-left_eye = ap.left_eye_happy
+left_eye = ap.left_eye_happy# normal eye
 right_eye = ap.right_eye_happy
 mouth = ap.mouth
 

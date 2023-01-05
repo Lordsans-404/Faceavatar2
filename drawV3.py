@@ -27,6 +27,7 @@ def drawInPygame(screen,list_point,font):
         
         points = list['points']
         rotation = list['rotation']
+        emotion_id = list['emotion']
         particles.add_particles()
         left_eyebrow = points[17:22]
         right_eyebrow = points[22:27]
@@ -82,6 +83,17 @@ def drawInPygame(screen,list_point,font):
             poly_3d.mouth[1][0] = poly_3d.mouth[0][0] - 0.175 - mouth_width * 0.5
             poly_3d.mouth[3][0] = poly_3d.mouth[0][0] + 0.175 + mouth_width * 0.5
 
+            if emotion_id == 1:
+                poly_3d.right_eye = ap.right_eye_happy
+                poly_3d.left_eye = ap.left_eye_happy
+
+            elif emotion_id == 4:
+                poly_3d.right_eye = ap.right_i_surprise
+                poly_3d.left_eye = ap.left_i_surprise
+
+            else:
+                poly_3d.right_eye = ap.right_eye
+                poly_3d.left_eye = ap.left_eye
 
             particles.show(screen)
             poly_3d.update(screen,poly_3d.x_angle,poly_3d.y_angle,poly_3d.z_angle)
@@ -99,8 +111,7 @@ def drawInPygame(screen,list_point,font):
 def runPygame(screen,clock,font):
     running = True
 
-    list = main(True)
-    # list_point = initOpencv(running)
+    list = main(True)# import main(function) from main.py(file)
     while running:
         drawInPygame(screen,list,font)
         clock.tick(60)
