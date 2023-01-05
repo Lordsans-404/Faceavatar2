@@ -38,6 +38,9 @@ def main(debug=True):
     # get a sample frame for pose estimation img
     success, img = cap.read()
 
+    # Emotion List
+    emotions = ["Angry","Happy","Neutral","Sad","Surprise"]
+
     # Pose estimation related
     pose_estimator = PoseEstimator((img.shape[0], img.shape[1]))
     image_points = np.zeros((pose_estimator.model_points_full.shape[0], 2))
@@ -78,13 +81,12 @@ def main(debug=True):
         # 2. detect landmarks;
         # 3. estimate pose
 
-        # first two steps
-        img_facemesh, faces = detector.findFaceMesh(img)
+        # first and two steps
+        img_facemesh, faces, emotion_id = detector.findFaceMesh(img)
 
         # flip the input image so that it matches the facemesh stuff
         img = cv2.flip(img, 1)
         rot = []
-        rot_last = []
         # kern_25 = np.ones((35,35),np.float32)/625.0
         # kern_output = cv2.filter2D(img,-1,kern_25)
 
@@ -149,12 +151,6 @@ def main(debug=True):
             roll = np.clip(np.degrees(steady_pose[0][1]), -90, 90) # Rot z
             pitch = np.clip(-(180 + np.degrees(steady_pose[0][0])), -90, 90)# Rot x
             yaw =  np.clip(np.degrees(steady_pose[0][2]), -90, 90) # Rot y
-
-            # print("Roll: %.2f, Pitch: %.2f, Yaw: %.2f" % (roll, pitch, yaw))
-            # print("left eye: %.2f, %.2f; right eye %.2f, %.2f"
-            #     % (steady_pose_eye[0], steady_pose_eye[1], steady_pose_eye[2], steady_pose_eye[3]))
-            # print("EAR_LEFT: %.2f; EAR_RIGHT: %.2f" % (ear_left, ear_right))
-            # print("MAR: %.2f; Mouth Distance: %.2f" % (mar, steady_mouth_dist))
             
             rot_x = steady_pose[0][0]+3
             rot_y = steady_pose[0][2]
@@ -175,7 +171,7 @@ def main(debug=True):
 
             pose_estimator.draw_axes(img, steady_pose[0], steady_pose[1])
             pose_estimator.draw_mouth(img,list_points)
-
+            pose_estimator.draw_info_text(img,emotions[emotion_id])
             
 
         else:
@@ -191,7 +187,7 @@ def main(debug=True):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        yield {'points':list_points,'rotation':rot}
+        yield {'points':list_points,'rotation':rot,"emotion":emotion_id}
 
 
 

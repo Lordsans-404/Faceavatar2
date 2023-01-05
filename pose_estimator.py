@@ -131,6 +131,16 @@ class PoseEstimator:
         cv2.line(img,mouth_pt1,mouth_pt2,(0,220,0),3)
         cv2.line(img,mouth_pt3,mouth_pt4,(0,0,220),3)
 
+    def draw_info_text(self ,img, facial_text):
+        cv2.rectangle(img, (2, 2), (182, 27),
+                     (0, 0, 0), -1)
+
+        if facial_text != "":
+            info_text = 'Emotion :' + facial_text
+        cv2.putText(img, info_text, (7,22),
+                   cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+
+
     def reset_r_vec_t_vec(self):
         self.r_vec = None
         self.t_vec = None
