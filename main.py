@@ -11,6 +11,7 @@ import numpy as np
 import socket
 from collections import deque
 from platform import system
+import imutils
 
 # face detection and facial landmark
 from facial_landmark import FaceMeshDetector
@@ -26,7 +27,7 @@ face_points = [127,93,132,58,172,136,150,176,152,400,365,379,397,288,361,323,356
 ,46,53,52,65,55,285,295,282,283,276,168,197,5,4,98,97,2,326,327,33,160,158,133,144,153
 ,362,385,387,263,373,380,61,40,37,0,267,270,291,321,314,17,84,91,78,81,13,311,308,402,14,178]
 
-def main(debug=True):
+def main(points,rotation,emotion,imgRGB,imgdebug=False):
 
     list_points = []
     list_points_last = []
@@ -178,16 +179,20 @@ def main(debug=True):
             # reset our pose estimator
             pose_estimator = PoseEstimator((img_facemesh.shape[0], img_facemesh.shape[1]))
 
-        if debug:
-            cv2.imshow('Facial landmark', img)
-            # cv2.imshow('Facial landmark', img_facemesh)
 
+        img2 = cv2.rotate(img,cv2.ROTATE_90_COUNTERCLOCKWISE)
+        img2 = cv2.cvtColor(img2,cv2.COLOR_BGR2RGB) # Important
+        img2 = cv2.flip(img2,0)
+        img2 = imutils.resize(img2,360)
 
         # press "q" to leave
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
-        yield {'points':list_points,'rotation':rot,"emotion":emotion_id}
+        points.put(list_points)
+        rotation.put(rot)
+        emotion.put(emotion_id)
+        imgRGB.put(img2)
+        # yield {'points':list_points,'rotation':rot,"emotion":emotion_id,"img":imgRGB}
 
 
 
