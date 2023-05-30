@@ -25,6 +25,7 @@ hoy = [0,4,5,6,8,9,15,17,18,19,20,37,40,41,47,49,50,51,52,67]
 running = False
 
 def drawInPygame(screen,points,rotation,emotion,img,show_cam,font):
+    py = sum(pos_histories[1]) / len(pos_histories[1])
     fake_screen = screen.copy()
     particles = poly_3d.Particles()
     keys=pygame.key.get_pressed()
@@ -142,14 +143,14 @@ def runPygame(screen,clock,font):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                opencv.terminate()
+
+
             if event.type == pygame.KEYDOWN:
-                print('oy')
                 if show_cam:
                     show_cam = False
                 else:
                     show_cam = True
-
-
 
 
 def initializePygame():
